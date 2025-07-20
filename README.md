@@ -231,6 +231,3 @@ POST /api/sessions/forgot-password
 - **nodemailer** (envío de emails)
 - **dotenv** (variables de entorno)
 
----
-
-**¡Proyecto listo para producción con arquitectura empresarial! 🎉** 
