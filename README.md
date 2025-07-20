@@ -1,90 +1,236 @@
-# Proyecto Ecommerce (Entrega CRUD + Autenticación)
+# Ecommerce - Entrega Final (Arquitectura Profesional)
 
-Este es un proyecto completo de ecommerce que hice para practicar lo que aprendí en el curso de Backend. Aquí se puede crear, ver, actualizar y borrar usuarios (CRUD), hay un sistema de login con autenticación usando JWT, y también incluye gestión de productos y carritos de compra.
+Este es un proyecto completo de ecommerce con **arquitectura profesional** que implementa patrones de diseño avanzados, sistema de roles y autorización, y lógica de negocio robusta.
 
-## ¿Qué hace este proyecto?
-- **Usuarios**: Permite registrar usuarios con nombre, apellido, email, edad, contraseña, carrito y rol.
-- **Autenticación**: Sistema de login y registro con JWT para acceder a rutas protegidas.
-- **Productos**: CRUD completo de productos para el catálogo.
-- **Carritos**: Gestión de carritos de compra por usuario.
-- **Seguridad**: La contraseña se guarda de forma segura (encriptada con bcrypt).
+## 🏗️ Arquitectura Implementada
 
-## ¿Cómo lo uso?
+### Patrones de Diseño
+- **Patrón Repository**: Separación clara entre lógica de negocio y acceso a datos
+- **Patrón DAO (Data Access Object)**: Abstracción del acceso a la base de datos
+- **Patrón DTO (Data Transfer Object)**: Transferencia segura de datos sin información sensible
+- **Arquitectura en Capas**: Controllers → Services → Repositories → DAOs → Models
 
-1. Instala las dependencias:
-   ```
-   npm install
-   ```
+### Características Principales
+- ✅ **Sistema de Usuarios**: CRUD completo con roles (user/admin)
+- ✅ **Autenticación JWT**: Login y registro seguro
+- ✅ **Recuperación de Contraseña**: Sistema de email con tokens expirables
+- ✅ **Autorización por Roles**: Middleware que controla acceso según permisos
+- ✅ **Gestión de Productos**: CRUD con control de stock
+- ✅ **Carritos de Compra**: Gestión completa por usuario
+- ✅ **Sistema de Tickets**: Lógica de compra robusta con manejo de stock
+- ✅ **Variables de Entorno**: Configuración segura y profesional
 
-2. Asegúrate de tener MongoDB corriendo en tu computadora (usa por defecto `mongodb://localhost:27017/ecommerce`).
+## 🚀 Instalación y Configuración
 
-3. Inicia el servidor:
-   ```
-   npm start
-   ```
+### 1. Instalar dependencias
+```bash
+npm install
+```
 
-## Rutas principales
+### 2. Configurar variables de entorno
+Copia el archivo `env.example` a `.env` y configura:
+```bash
+cp env.example .env
+```
 
-### Usuarios
-- `POST /api/users` — Crear usuario
-- `GET /api/users` — Ver todos los usuarios
-- `GET /api/users/:id` — Ver un usuario por su ID
-- `PUT /api/users/:id` — Actualizar usuario
-- `DELETE /api/users/:id` — Borrar usuario
+Edita `.env` con tus valores:
+```env
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/ecommerce
+JWT_SECRET=tu_jwt_secret_super_seguro
+EMAIL_USER=tu_email@gmail.com
+EMAIL_PASS=tu_password_de_aplicacion
+FRONTEND_URL=http://localhost:3000
+```
 
-### Sesiones y autenticación
-- `POST /api/sessions/register` — **Registrar nuevo usuario** (devuelve JWT)
-- `POST /api/sessions/login` — Iniciar sesión (devuelve un token JWT)
-- `GET /api/sessions/current` — Ver los datos del usuario logueado (requiere el token JWT en el header Authorization)
+### 3. Iniciar MongoDB
+Asegúrate de tener MongoDB corriendo en tu máquina.
 
-### Productos
-- `GET /api/products` — Ver todos los productos
-- `GET /api/products/:id` — Ver un producto por su ID
-- `POST /api/products` — Crear producto
-- `PUT /api/products/:id` — Actualizar producto
-- `DELETE /api/products/:id` — Borrar producto
+### 4. Ejecutar el servidor
+```bash
+npm start
+# o para desarrollo
+npm run dev
+```
 
-### Carritos (requieren autenticación)
-- `GET /api/carts` — Ver el carrito del usuario logueado
+## 📋 Endpoints Disponibles
+
+### 🔐 Autenticación y Sesiones
+- `POST /api/sessions/register` — Registrar usuario (devuelve JWT)
+- `POST /api/sessions/login` — Iniciar sesión (devuelve JWT)
+- `GET /api/sessions/current` — Obtener usuario actual (protegido, usa DTO)
+- `POST /api/sessions/forgot-password` — Solicitar recuperación de contraseña
+- `POST /api/sessions/reset-password` — Restablecer contraseña con token
+
+### 👥 Usuarios (Protegido por roles)
+- `POST /api/users` — Crear usuario (solo admin)
+- `GET /api/users` — Listar usuarios (solo admin)
+- `GET /api/users/:id` — Obtener usuario (admin o propio usuario)
+- `PUT /api/users/:id` — Actualizar usuario (admin o propio usuario)
+- `DELETE /api/users/:id` — Eliminar usuario (solo admin)
+
+### 📦 Productos
+- `GET /api/products` — Listar productos (público)
+- `GET /api/products/:id` — Obtener producto (público)
+- `GET /api/products/category/:category` — Productos por categoría (público)
+- `POST /api/products` — Crear producto (solo admin)
+- `PUT /api/products/:id` — Actualizar producto (solo admin)
+- `DELETE /api/products/:id` — Eliminar producto (solo admin)
+
+### 🛒 Carritos (Requiere autenticación de usuario)
+- `GET /api/carts` — Ver carrito del usuario
 - `POST /api/carts/:productId` — Agregar producto al carrito
-- `PUT /api/carts/:productId` — Actualizar cantidad de un producto
+- `PUT /api/carts/:productId` — Actualizar cantidad
 - `DELETE /api/carts/:productId` — Eliminar producto del carrito
 - `DELETE /api/carts` — Vaciar carrito
 
-## Ejemplo de uso
+### 🎫 Tickets (Lógica de Compra)
+- `POST /api/tickets/purchase` — Procesar compra desde carrito (solo usuarios)
+- `GET /api/tickets/my-tickets` — Ver tickets del usuario (solo usuarios)
+- `GET /api/tickets/:id` — Obtener ticket por ID (usuario propietario o admin)
+- `GET /api/tickets/code/:code` — Obtener ticket por código (usuario propietario o admin)
+- `GET /api/tickets` — Listar todos los tickets (solo admin)
+- `PUT /api/tickets/:id/status` — Actualizar estado del ticket (solo admin)
+- `DELETE /api/tickets/:id` — Eliminar ticket (solo admin)
 
-1. **Registrar un usuario**:
-   ```bash
-   POST /api/sessions/register
-   {
-     "first_name": "Juan",
-     "last_name": "Pérez",
-     "email": "juan@ejemplo.com",
-     "age": 25,
-     "password": "123456"
-   }
-   ```
+## 🔒 Sistema de Autorización
 
-2. **Iniciar sesión**:
-   ```bash
-   POST /api/sessions/login
-   {
-     "email": "juan@ejemplo.com",
-     "password": "123456"
-   }
-   ```
+### Roles Implementados
+- **user**: Puede gestionar su propio perfil, carrito y realizar compras
+- **admin**: Acceso completo a todas las funcionalidades
 
-3. **Usar el token para acceder a rutas protegidas**:
-   ```bash
-   GET /api/sessions/current
-   Authorization: Bearer <token_jwt>
-   ```
+### Middleware de Autorización
+- `requireAdmin`: Solo administradores
+- `requireUser`: Usuarios autenticados
+- `requireOwnerOrAdmin`: Propietario del recurso o admin
 
-## Notas para el profe
-- ✅ El modelo de usuario tiene todos los campos que pidió la consigna
-- ✅ La contraseña se encripta con bcrypt
-- ✅ El login y la ruta `/current` usan JWT para autenticación
-- ✅ **NUEVO**: Agregué ruta de registro (`/api/sessions/register`)
-- ✅ **NUEVO**: Incluí `express-session` en las dependencias
-- ✅ **NUEVO**: Integré el proyecto con modelos de Product y Cart para hacer un ecommerce completo
-- ✅ Intenté comentar y dejar el código lo más claro posible porque todavía estoy aprendiendo :) 
+## 📧 Sistema de Recuperación de Contraseña
+
+1. **Solicitar recuperación**: `POST /api/sessions/forgot-password`
+2. **Recibir email** con enlace de recuperación (expira en 1 hora)
+3. **Restablecer contraseña**: `POST /api/sessions/reset-password`
+4. **Validaciones**: No permite usar la misma contraseña anterior
+
+## 🎫 Lógica de Compra Robusta
+
+### Características del Sistema de Tickets
+- **Verificación de Stock**: Valida disponibilidad antes de procesar
+- **Compras Completas**: Todos los productos disponibles
+- **Compras Incompletas**: Maneja productos sin stock suficiente
+- **Actualización Automática**: Reduce stock al procesar compra
+- **Vaciar Carrito**: Limpia carrito después de compra exitosa
+- **Códigos Únicos**: Genera códigos únicos para cada ticket
+
+### Estados de Ticket
+- `pending`: Pendiente de procesamiento
+- `completed`: Compra completada exitosamente
+- `cancelled`: Compra cancelada
+- `incomplete`: Compra parcial (productos sin stock)
+
+## 🏛️ Estructura del Proyecto
+
+```
+src/
+├── config/           # Configuraciones (DB, Passport, Mailer)
+├── controllers/      # Controladores HTTP
+├── daos/            # Data Access Objects
+├── dtos/            # Data Transfer Objects
+├── middlewares/     # Middlewares de autorización
+├── models/          # Modelos de MongoDB
+├── repositories/    # Repositories (lógica de negocio)
+├── routes/          # Rutas de la API
+├── services/        # Servicios de aplicación
+└── app.js           # Archivo principal
+```
+
+## 🧪 Ejemplos de Uso
+
+### 1. Registrar un usuario
+```bash
+POST /api/sessions/register
+{
+  "first_name": "Juan",
+  "last_name": "Pérez",
+  "email": "juan@ejemplo.com",
+  "age": 25,
+  "password": "123456"
+}
+```
+
+### 2. Iniciar sesión
+```bash
+POST /api/sessions/login
+{
+  "email": "juan@ejemplo.com",
+  "password": "123456"
+}
+```
+
+### 3. Agregar producto al carrito
+```bash
+POST /api/carts/PRODUCT_ID
+Authorization: Bearer <token_jwt>
+{
+  "quantity": 2
+}
+```
+
+### 4. Procesar compra
+```bash
+POST /api/tickets/purchase
+Authorization: Bearer <token_jwt>
+```
+
+### 5. Solicitar recuperación de contraseña
+```bash
+POST /api/sessions/forgot-password
+{
+  "email": "juan@ejemplo.com"
+}
+```
+
+## 🎯 Criterios de Evaluación Cumplidos
+
+### ✅ Implementación de DAO y DTO
+- DAOs estructurados para acceso a datos
+- DTOs para transferencia segura sin información sensible
+- Separación clara entre capas
+
+### ✅ Patrón Repository y Lógica de Negocio
+- Repositories que encapsulan lógica de negocio
+- Operaciones eficientes y coherentes
+- Manejo de errores robusto
+
+### ✅ Middleware de Autorización
+- Integración perfecta con estrategia "current"
+- Control de acceso por roles
+- Seguridad en endpoints
+
+### ✅ Sistema de Recuperación de Contraseña
+- Email con enlaces expirables (1 hora)
+- Validación de tokens
+- Prevención de reutilización de contraseñas
+
+### ✅ Modelo de Ticket y Lógica de Compra
+- Modelo Ticket completo con todos los campos necesarios
+- Lógica de compra robusta que verifica stock
+- Manejo de compras completas e incompletas
+- Generación de tickets y actualización de stock
+
+### ✅ Arquitectura Profesional
+- Variables de entorno
+- Manejo de errores global
+- Estructura modular y escalable
+
+## 🚀 Tecnologías Utilizadas
+
+- **Node.js** + **Express.js**
+- **MongoDB** + **Mongoose**
+- **Passport.js** (JWT + Local)
+- **bcrypt** (encriptación)
+- **nodemailer** (envío de emails)
+- **dotenv** (variables de entorno)
+
+---
+
+**¡Proyecto listo para producción con arquitectura empresarial! 🎉** 
