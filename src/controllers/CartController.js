@@ -1,13 +1,13 @@
-import { CartRepository } from '../repositories/CartRepository.js';
+import { CartService } from '../services/CartService.js';
 
 export class CartController {
   constructor() {
-    this.cartRepository = new CartRepository();
+    this.cartService = new CartService();
   }
 
   async getUserCart(req, res) {
     try {
-      const cart = await this.cartRepository.getUserCart(req.user.id);
+      const cart = await this.cartService.getUserCart(req.user.id);
       res.json(cart);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -19,7 +19,7 @@ export class CartController {
       const { productId } = req.params;
       const { quantity = 1 } = req.body;
       
-      const cart = await this.cartRepository.addProductToCart(req.user.id, productId, quantity);
+      const cart = await this.cartService.addProductToCart(req.user.id, productId, quantity);
       res.json(cart);
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -31,7 +31,7 @@ export class CartController {
       const { productId } = req.params;
       const { quantity } = req.body;
       
-      const cart = await this.cartRepository.updateProductQuantity(req.user.id, productId, quantity);
+      const cart = await this.cartService.updateProductQuantity(req.user.id, productId, quantity);
       res.json(cart);
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -42,7 +42,7 @@ export class CartController {
     try {
       const { productId } = req.params;
       
-      const cart = await this.cartRepository.removeProductFromCart(req.user.id, productId);
+      const cart = await this.cartService.removeProductFromCart(req.user.id, productId);
       res.json(cart);
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -51,7 +51,7 @@ export class CartController {
 
   async clearCart(req, res) {
     try {
-      const cart = await this.cartRepository.clearCart(req.user.id);
+      const cart = await this.cartService.clearCart(req.user.id);
       res.json(cart);
     } catch (error) {
       res.status(400).json({ error: error.message });

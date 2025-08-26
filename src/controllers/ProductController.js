@@ -1,13 +1,13 @@
-import { ProductRepository } from '../repositories/ProductRepository.js';
+import { ProductService } from '../services/ProductService.js';
 
 export class ProductController {
   constructor() {
-    this.productRepository = new ProductRepository();
+    this.productService = new ProductService();
   }
 
   async getAllProducts(req, res) {
     try {
-      const products = await this.productRepository.getAllProducts();
+      const products = await this.productService.getAllProducts();
       res.json(products);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -16,7 +16,7 @@ export class ProductController {
 
   async getProductById(req, res) {
     try {
-      const product = await this.productRepository.findProductById(req.params.id);
+      const product = await this.productService.getProductById(req.params.id);
       res.json(product);
     } catch (error) {
       res.status(404).json({ error: error.message });
@@ -25,7 +25,7 @@ export class ProductController {
 
   async createProduct(req, res) {
     try {
-      const product = await this.productRepository.createProduct(req.body);
+      const product = await this.productService.createProduct(req.body);
       res.status(201).json(product);
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -34,7 +34,7 @@ export class ProductController {
 
   async updateProduct(req, res) {
     try {
-      const product = await this.productRepository.updateProduct(req.params.id, req.body);
+      const product = await this.productService.updateProduct(req.params.id, req.body);
       res.json(product);
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -43,7 +43,7 @@ export class ProductController {
 
   async deleteProduct(req, res) {
     try {
-      const result = await this.productRepository.deleteProduct(req.params.id);
+      const result = await this.productService.deleteProduct(req.params.id);
       res.json(result);
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -52,7 +52,7 @@ export class ProductController {
 
   async getProductsByCategory(req, res) {
     try {
-      const products = await this.productRepository.getProductsByCategory(req.params.category);
+      const products = await this.productService.getProductsByCategory(req.params.category);
       res.json(products);
     } catch (error) {
       res.status(500).json({ error: error.message });
